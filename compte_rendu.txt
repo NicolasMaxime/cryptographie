@@ -1,0 +1,22 @@
+Nicolas Maxime
+
+Compte rendu cryptographie
+
+Question 1
+	Le langage choisit est le C, la librairie utilisée permetant de gérer des nombres entiers de grande taille est GMP. (libgmp)
+	La bibliothèque permet de générer de grand nombre aléatoire, determiner si un nombre est premier ou non, faire des :
+	multiplications, additions, soustractions, divisions, congruences, tests de divisibilité (savoir si d divise n), calculs exponentielles, 
+	racines carrés, puissances, ainsi que des opérations logiques (and, or, xor, ...).
+	
+Question 2
+
+
+Question 3
+	On utilise le test de primalité de Miller-Rabin.
+	Un test probabilistes est un test qui s'autorise une certaine marge d'erreur et par conséquent qui ne donne pas forcément 
+	une réponse juste.
+	Sous GMP, la fonction  int mpz_probab_prime_p (const mpz_t n, int reps) permet de faire ce test.
+	
+Question 4 :
+	Sous gmp la fonction mpz_powm permet de faire ceci.
+	
