@@ -10,7 +10,8 @@ SRC	= ./src
 SRCS	= $(SRC)/main.c\
 	  $(SRC)/function.c\
 	  $(SRC)/test.c\
-	  $(SRC)/keygen.c
+	  $(SRC)/keygen.c\
+	  $(SRC)/key.c
 
 OBJS	= $(SRCS:.c=.o)
 
