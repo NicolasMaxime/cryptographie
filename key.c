@@ -15,6 +15,7 @@ void key(mpz_t q, mpz_t p, mpz_t g, mpz_t Kp, mpz_t Ks) {
     mpz_init(x);
     mpz_t tmp;
     mpz_init(tmp);
+    gmp_randstate_t state;
     mpz_sub_ui(tmp, p, 4);	// tmp = p - 4
     mpz_urandomm(x, state, tmp);// 0 <= g <= p - 4
     mpz_add_ui(x, x, 2);	// 2 <= g <= p - 2
