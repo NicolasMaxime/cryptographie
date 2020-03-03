@@ -19,4 +19,14 @@ Question 3
 	
 Question 4 :
 	Sous gmp la fonction mpz_powm permet de faire ceci.
-	
+
+
+Question 7:
+    Une fonction de hachage cryptographiquement sûr est une fonction qui doit:
+     - Etre rapide à utiliser.
+     - Résister à la colision: c'est dur ( en 2^(nombres de bit/2) ) de trouver x' différent de x tel que H(x) = H(x')
+     - Résister à la préimage: c'est dur ( en 2^nombres de bit ) de trouver un x tel que H(x)=y
+     - Résister à la 2nd préimage: soit un x donné, c'est dur ( en 2^nombres de bit ) de trouver x' différent de x tel que H(x) = H(x')
+
+    Etant donnée que la sortie fait au moins 256bits on peut utiliser au minimum SHA-256, on peut aussi utiliser SHA-512 ou SHA-3
+    Une librairie qui permet l'utilisation d'une fonction de hachage en C est sha de openssl
