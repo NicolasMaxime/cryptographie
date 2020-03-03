@@ -1,4 +1,4 @@
-Nicolas Maxime
+Ipseiz Angela, Li-Cho Dylan, Nicolas Maxime
 
 Compte rendu cryptographie
 
@@ -8,8 +8,8 @@ Question 1
 	multiplications, additions, soustractions, divisions, congruences, tests de divisibilité (savoir si d divise n), calculs exponentielles, 
 	racines carrés, puissances, ainsi que des opérations logiques (and, or, xor, ...).
 	
-Question 2
-
+Question 2    
+    Un nombre aléaoire est cryptographiquement sûr si son générateur de nombre aléatoire est cryptographiquement sûr, c'est-à-dire s'il utilise une entropie externe la plus élevée possible et que tous les nombres aléatoires ont la même probabilité d'être générés. 
 
 Question 3
 	On utilise le test de primalité de Miller-Rabin.
