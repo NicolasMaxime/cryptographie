@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 #include "gmp.h"
 #include "function.h"
 #include "sha256.h"
@@ -27,7 +28,16 @@ sign_t	*Sign(char *message, mpz_t Ks, key_gpq_t *val){
   ExpMod(R, val->g, r, val->p); // r = g^r [p]
 
   /* calcul de c = H(R||M) mod q */
-  mpz_set_ui(signature->c, 1); // a retirer
+  TCSha256State_t sha;
+  char *strR = NULL;
+  char *dest;
+  
+  tc_sha256_init(sha);
+  strR = mpz_get_str("0123456789", 10, R);
+  dest = malloc(sizeof(*dest) * (strlen(strR) + strlen(message)));
+  dest[0] = 0;
+  strcat(dest, strR); // dest = R;
+  strcat(dest, message); // dest = R || M
   
   /* Calcul de a*/
   mpz_mul(tmp, signature->c, Ks);
