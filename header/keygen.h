@@ -1,6 +1,8 @@
 #ifndef KEYGEN_H_
 # define KEYGEN_H_
 
+#include "gmp.h"
+
 typedef struct key_qpg_s {
   mpz_t g;
   mpz_t p;
