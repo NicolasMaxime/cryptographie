@@ -8,18 +8,22 @@
 #include "key.h"
 #include "sha256.h"
 
-void schnorr(){
+void	generate_key(mpz_t Ks, mpz_t Kp){
   key_gpq_t *val;
-  TCSha256State_t test;
-  mpz_t Ks;
-  mpz_t Kp;
   
   val = keygen(256, 1792);
   key(val->q, val->p, val->g, Kp, Ks);
-  tc_sha256_init(test);
 }
 
-int main(){
+void schnorr(){
+  return ;
+}
+
+int	main(){
+  mpz_t Ks;
+  mpz_t Kp;
+  
+  generate_key(Ks, Kp);
   schnorr();
   //test_exponentiation_binaire(); //ok
   //free(key);
