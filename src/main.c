@@ -6,7 +6,7 @@
 #include "test.h"
 #include "keygen.h"
 #include "key.h"
-#include "sha256.h"
+#include "shnorr.h"
 
 void	generate_key(mpz_t Ks, mpz_t Kp){
   key_gpq_t *val;
@@ -15,7 +15,7 @@ void	generate_key(mpz_t Ks, mpz_t Kp){
   key(val->q, val->p, val->g, Kp, Ks);
 }
 
-void schnorr(){
+void shnorr(){
   return ;
 }
 
@@ -24,7 +24,7 @@ int	main(){
   mpz_t Kp;
   
   generate_key(Ks, Kp);
-  schnorr();
+  shnorr();
   //test_exponentiation_binaire(); //ok
   //free(key);
   return 0;

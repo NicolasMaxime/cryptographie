@@ -11,7 +11,8 @@ SRCS	= $(SRC)/main.c\
 	  $(SRC)/function.c\
 	  $(SRC)/test.c\
 	  $(SRC)/keygen.c\
-	  $(SRC)/key.c
+	  $(SRC)/key.c\
+	  $(SRC)/shnorr.c
 
 OBJS	= $(SRCS:.c=.o)
 
