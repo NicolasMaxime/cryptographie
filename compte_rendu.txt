@@ -29,4 +29,5 @@ Question 7:
      - Résister à la 2nd préimage: soit un x donné, c'est dur ( en 2^nombres de bit ) de trouver x' différent de x tel que H(x) = H(x')
 
     Etant donnée que la sortie fait au moins 256bits on peut utiliser au minimum SHA-256, on peut aussi utiliser SHA-512 ou SHA-3
-    Une librairie qui permet l'utilisation d'une fonction de hachage en C est sha de openssl
+    Il existe quelques librairies en c permettant de faire ceci, ici
+    nous utiliserons SHA256 avec la librairie tinycrypt de intel. (https://github.com/intel/tinycrypt)

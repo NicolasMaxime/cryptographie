@@ -16,7 +16,7 @@ void	make_rand_nbits(mpz_t r, mp_bitcnt_t size){
   gmp_randstate_t state;
 
   gmp_randinit_mt(state);
-  gmp_randseed_ui(state, seed);
+  gmp_randseed_ui(state, seed * rand());
   mpz_urandomb(r, state, size);
   seed = seed + 1;
 }
@@ -52,7 +52,7 @@ void	make_g(mpz_t g, mpz_t q, mpz_t p, mpz_t k){
   mpz_t	tmp;
 
   gmp_randinit_mt(state);
-  gmp_randseed_ui(state, seed);
+  gmp_randseed_ui(state, seed * rand());
   continuer = 0;
   mpz_init(g);
   mpz_init(tmp);
@@ -60,10 +60,11 @@ void	make_g(mpz_t g, mpz_t q, mpz_t p, mpz_t k){
     mpz_sub_ui(tmp, p, 4);	// tmp = p - 4
     mpz_urandomm(g, state, tmp);// 0 <= g <= p - 4
     mpz_add_ui(g, g, 2);	// 2 <= g <= p - 2
-    printf("\n");
-    mpz_out_str(stdout, 10, g);
-    printf("\n");
-    seed = seed + 1;
+    ExpMod(tmp, g, k, p);
+    if (mpz_cmp_ui(tmp, 1) != 0)
+      continuer = 1;
+    else
+      seed = seed + 1;
   }
 }
 
@@ -73,6 +74,7 @@ key_gpq_t	*keygen(mp_bitcnt_t n, mp_bitcnt_t o){
   key_gpq_t	*ret;
 
   ret = malloc(sizeof(*ret));
+  srand(time(NULL));
   mpz_init(k);
   make_q(ret->q, n);
   make_p(ret->p, ret->q, k, o);

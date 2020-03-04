@@ -17,7 +17,8 @@ OBJS	= $(SRCS:.c=.o)
 
 HEADERS	= $(IDIR)/*
 
-LIBS	= -lgmp
+LIBS	= -lgmp\
+	  -ltinycrypt
 
 CC	= gcc
 
