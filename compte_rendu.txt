@@ -1,21 +1,30 @@
-Ipseiz Angela, Li-Cho Dylan, Nicolas Maxime
+﻿Ipseiz Angela, Li-Cho Dylan, Nicolas Maxime
 
 Compte rendu cryptographie
 
 Question 1
+
 	Le langage choisit est le C, la librairie utilisée permetant de gérer des nombres entiers de grande taille est GMP. (libgmp)
-	La bibliothèque permet de générer de grand nombre aléatoire, determiner si un nombre est premier ou non, faire des :
-	multiplications, additions, soustractions, divisions, congruences, tests de divisibilité (savoir si d divise n), calculs exponentielles, 
-	racines carrés, puissances, ainsi que des opérations logiques (and, or, xor, ...).
+
+	La bibliothèque permet de générer de grand nombre aléatoire, determine si un nombre est premier ou non, faire des multiplications, additions, soustractions, divisions, congruences, tests de divisibilité (savoir si d divise n), calculs exponentielles, 
+racines carrés, puissances, ainsi que des opérations logiques (and, or, xor, ...).
 	
 Question 2    
-    Un nombre aléaoire est cryptographiquement sûr si son générateur de nombre aléatoire est cryptographiquement sûr, c'est-à-dire s'il utilise une entropie externe la plus élevée possible et que tous les nombres aléatoires ont la même probabilité d'être générés. 
+   Un nombre aléatoire est cryptographiquement sûr si :
+
+→ son générateur de nombre aléatoire est cryptographiquement sûr, c'est-à-dire s'il utilise une entropie externe la plus élevée possible et que tous les nombres aléatoires ont la même probabilité d'être générés.
+	
+→  S’il est imprédictible : connaissant les n premiers bits, est il possible de prédire le bit n+1 suivant ?
+
+→  La période de son générateur est suffisamment longue,
+
 
 Question 3
+
 	On utilise le test de primalité de Miller-Rabin.
-	Un test probabilistes est un test qui s'autorise une certaine marge d'erreur et par conséquent qui ne donne pas forcément 
-	une réponse juste.
-	Sous GMP, la fonction  int mpz_probab_prime_p (const mpz_t n, int reps) permet de faire ce test.
+Un test probabilistes est un test qui s'autorise une certaine marge d'erreur et par conséquent qui ne donne pas forcément 
+une réponse juste.
+Sous GMP, la fonction  int mpz_probab_prime_p (const mpz_t n, int reps) permet de faire ce test : Elle renvoie 2 si le nombre est premier à coup sur, 1 si le nombre est probablement premier, 0 sinon.
 	
 Question 4 :
 	Sous gmp la fonction mpz_powm permet de faire ceci.
@@ -24,10 +33,10 @@ Question 4 :
 Question 7:
     Une fonction de hachage cryptographiquement sûr est une fonction qui doit:
      - Etre rapide à utiliser.
-     - Résister à la colision: c'est dur ( en 2^(nombres de bit/2) ) de trouver x' différent de x tel que H(x) = H(x')
+     - Résister à la colision: c'est dur ( en 2^(nombres de bit/2) ) de trouver x'     différent de x tel que H(x) = H(x')
      - Résister à la préimage: c'est dur ( en 2^nombres de bit ) de trouver un x tel que H(x)=y
      - Résister à la 2nd préimage: soit un x donné, c'est dur ( en 2^nombres de bit ) de trouver x' différent de x tel que H(x) = H(x')
 
-    Etant donnée que la sortie fait au moins 256bits on peut utiliser au minimum SHA-256, on peut aussi utiliser SHA-512 ou SHA-3
-    Il existe quelques librairies en c permettant de faire ceci, ici
-    nous utiliserons SHA256 avec la librairie tinycrypt de intel. (https://github.com/intel/tinycrypt)
+    Etant donné que la sortie fait au moins 256bits on peut utiliser au minimum SHA-256, on peut aussi utiliser SHA-512 ou SHA-3
+Il existe quelques librairies en c permettant d’employer ces fonctions, ici
+ nous utiliserons SHA256 avec la librairie tinycrypt de intel. (https://github.com/intel/tinycrypt)
