@@ -12,14 +12,14 @@
 #include "shnorr.h"
 
 #define BASE10 10
-#define NB_ESSAIE 10
+#define NB_ESSAIE 5
 
 /*
 ** Test de comparaison entre ExpMod (du DM)
 ** et mpz_pown (de gmp) qui calculent g^a mod p
 */
 
-void	test_exponentiation_binaire(){
+void	test_exponentiation_binaire(FILE *fp){
   mpz_t p;
   mpz_t g;
   mpz_t a;
@@ -39,21 +39,21 @@ void	test_exponentiation_binaire(){
     ExpMod(ret, g, a, p);
     mpz_powm(tmp, g, a, p);
 
-    gmp_printf("g = %Zd\n", g);
-    gmp_printf("a = %Zd\n", a);
-    gmp_printf("p = %Zd\n", p);
-    printf("g ^ a mod p : \n");
-    gmp_printf("->Par mpz_powm\t: %Zd\n", tmp);
-    gmp_printf("->Par ExpMod\t: %Zd\n", ret);
+    gmp_fprintf(fp, "g = %Zd\n", g);
+    gmp_fprintf(fp, "a = %Zd\n", a);
+    gmp_fprintf(fp, "p = %Zd\n\n", p);
+    fprintf(fp, "g ^ a mod p : \n");
+    gmp_fprintf(fp, " ->Par mpz_powm\t: %Zd\n", tmp);
+    gmp_fprintf(fp, " ->Par ExpMod\t: %Zd\n\n", ret);
     
     if (!(mpz_cmp(ret, tmp) == 0)) {// ret != cmp
-      printf("Error : ExpMod and mpz_powm don't return the same value\n");
+      fprintf(fp, "Error : ExpMod and mpz_powm don't return the same value\n");
       
     }
   }
 }
 
-void test_100_signature(mpz_t Ks, mpz_t Kp, key_gpq_t *val){
+void test_100_signature(mpz_t Ks, mpz_t Kp, key_gpq_t *val, FILE *fp){
   char message[10];
   int nb;
   int ret;
@@ -68,12 +68,19 @@ void test_100_signature(mpz_t Ks, mpz_t Kp, key_gpq_t *val){
     message[strlen(message) + 1] = 0;
     signature = Sign(message, Ks, val);
     ret = Verify(message, signature, Kp, val);
+    if (i < NB_ESSAIE){
+      fprintf(fp, "message : \"%s\"\n", message);
+      gmp_fprintf(fp, "Signature : (%Zd, %Zd)\n", signature->c, signature->a);
+      if (ret == 0){
+	fprintf(fp, "=> verification OK\n");
+      }
+    }
     if (ret == -1){
-      printf("Erreur au test : %d, message : %s\n", i, message);
+      fprintf(fp, "Erreur au test : %d, message : %s\n", i, message);
       allgood = 0;
     }
   }
   if (allgood){
-    printf("Les 100 tests ont réussi\n");
+    fprintf(fp, "Les 100 tests ont réussi\n");
   }
 }
