@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
@@ -28,37 +29,50 @@ sign_t	*Sign(char *message, mpz_t Ks, key_gpq_t *val){
 
   ExpMod(R, val->g, r, val->p); // R = g^r [p]
 
-  /* calcul de c = H(R||M) mod q */
+  /* calcul de H(R||M) */
   TCSha256State_t sha;
+  uint8_t digest[32];
   char *strR = NULL;
   char *dest;
-  
-  tc_sha256_init(sha);
-  strR = mpz_get_str("0123456789", 10, R);
-  dest = malloc(sizeof(*dest) * (strlen(strR) + strlen(message)));
+ 
+  strR = mpz_get_str(NULL, 10, R);
+  dest = malloc(sizeof(*dest) * (strlen(strR) + strlen(message)) + 1);
   dest[0] = 0;
   strcat(dest, strR); // dest = R;
   strcat(dest, message); // dest = R || M
-  tc_sha256_update(sha,dest,strlen(strR) + strlen(message)); // H(R||M)
-  mpz_t Res,tmp3;
-  mpz_init(Res);
-  mpz_init(tmp3);
-  mpz_set_ui(tmp3,sha->bits_hashed);
-  mpz_mod(signature->c,tmp3,val->q);// modulo q
+  sha = malloc(sizeof(*sha));
+  tc_sha256_init(sha);
+  tc_sha256_update(sha,(const uint8_t *)dest,strlen(strR) + strlen(message)); // H(R||M)
+  tc_sha256_final(digest, sha);
+
+  /* Transformation du haché en nombre */
+  char *convert = malloc(32 * 3 * sizeof(char) + 1);
+  convert[0] = 0;
+  char stock[3];
+  for (int i = 0; i != 32; i++){
+    stock[0] = 0;
+    sprintf(stock, "%d", digest[i]);
+    strcat(convert, stock);
+  }
+
+  /* Calcul de c */
+  mpz_set_str(tmp, convert, 10);
+  mpz_mod(signature->c,tmp,val->q);// modulo q
   
   /* Calcul de a*/
   mpz_mul(tmp, signature->c, Ks);
   mpz_sub(signature->a, r, tmp);
-  mpz_set_ui(tmp, 1);
-  ExpMod(signature->a, signature->a, tmp, val->q); // a^1 = r - cx [q]
+  mpz_mod(signature->a, signature->a, val->q); // a = r - cx [q]
 
+  free(sha);
+  free(dest);
+  free(convert);
   return signature;
+
 }
 
-/* 
-*/
 
-bool Verify(char* message, sign_t *signature, mpz_t Kp, key_gpq_t *val){
+int	Verify(char* message, sign_t *signature, mpz_t Kp, key_gpq_t *val){
   mpz_t R;
   mpz_t tmp;
   mpz_t	tmp2;
@@ -66,36 +80,48 @@ bool Verify(char* message, sign_t *signature, mpz_t Kp, key_gpq_t *val){
   mpz_init(tmp);
   mpz_init(tmp2);
   mpz_init(R);
+
+  /* Calcul de R' = g^a * h^c mod p */
   ExpMod(tmp, val->g, signature->a, val->p); // tmp = g^a mod p
   ExpMod(tmp2, Kp, signature->c, val->p); // tmp2 = h ^ c mod p
   mpz_mul(R, tmp, tmp2); // R = tmp * tmp2
-  mpz_set_ui(tmp, 1);
-  ExpMod(R, R, tmp, val->p); //  R = R[p]
+  mpz_mod(R, R, val->p); //  R = R[p]
 
-  //calculer tmp = H(R' || M) [q]
+  /* calcule de H(R'|| M) [q] */
   TCSha256State_t sha;
+  uint8_t digest[32];
   char *strR = NULL;
-  char *dest;
+  char *dest = NULL;
 
-  tc_sha256_init(sha);
-  strR = mpz_get_str("0123456789", 10, R);
-  dest = malloc(sizeof(*dest) * (strlen(strR) + strlen(message)));
+  strR = mpz_get_str(NULL, 10, R);
+  dest = malloc(sizeof(*dest) * (strlen(strR) + strlen(message)) +1);
   dest[0] = 0;
   strcat(dest, strR); // dest = R;
   strcat(dest, message); // dest = R || M
-  tc_sha256_update(sha,dest,strlen(strR) + strlen(message));
-  mpz_t Res,tmp3;
-  mpz_init(Res);
-  mpz_init(tmp3);
-  mpz_set_ui(tmp3,sha->bits_hashed);
-  mpz_mod(tmp,tmp3,val->q);// modulo
-  mpz_mod(Res,signature->c,val->q);
-
-  //verifier c = w
-  if( mpz_cmp(Res,tmp)){
-    printf("MARCHEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEe \n");
-    return true;
-  }
   
-  return false;
+  sha = malloc(sizeof(*sha));
+  tc_sha256_init(sha);
+  tc_sha256_update(sha,(const uint8_t *)dest,strlen(strR) + strlen(message)); // H(R||M)
+  tc_sha256_final(digest, sha);
+
+  char *convert = malloc(32 * 3 * sizeof(char) + 1);
+  convert[0] = 0;
+  char stock[3];
+  for (int i = 0; i != 32; i++){
+    stock[0] = 0;
+    sprintf(stock, "%d", digest[i]);
+    strcat(convert, stock);
+  }
+  mpz_set_str(tmp, convert, 10);
+  mpz_mod(tmp,tmp,val->q);// modulo
+  
+  free(sha);
+  free(dest);
+  free(convert);
+  
+//verifier c = w
+  if(mpz_cmp(tmp, signature->c) == 0){
+    return 0;
+  }
+  return -1;
 }

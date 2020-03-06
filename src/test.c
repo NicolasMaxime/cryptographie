@@ -1,7 +1,15 @@
 #include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
+#include <time.h>
 #include "gmp.h"
 #include "function.h"
+#include "test.h"
 #include "keygen.h"
+#include "key.h"
+#include "shnorr.h"
 
 #define BASE10 10
 #define NB_ESSAIE 10
@@ -42,5 +50,30 @@ void	test_exponentiation_binaire(){
       printf("Error : ExpMod and mpz_powm don't return the same value\n");
       
     }
+  }
+}
+
+void test_100_signature(mpz_t Ks, mpz_t Kp, key_gpq_t *val){
+  char message[10];
+  int nb;
+  int ret;
+  int allgood;
+  sign_t *signature;
+  
+  srand(time(NULL));
+  allgood = 1;
+  for (int i = 0; i != 100; i++){
+    nb = rand() % 1000000000;
+    sprintf(message, "%d", nb);
+    message[strlen(message) + 1] = 0;
+    signature = Sign(message, Ks, val);
+    ret = Verify(message, signature, Kp, val);
+    if (ret == -1){
+      printf("Erreur au test : %d, message : %s\n", i, message);
+      allgood = 0;
+    }
+  }
+  if (allgood){
+    printf("Les 100 tests ont réussi\n");
   }
 }
