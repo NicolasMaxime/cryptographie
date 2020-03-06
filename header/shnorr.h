@@ -9,6 +9,6 @@ typedef struct sign_s{
 } sign_t; 
 
 sign_t *Sign(char *message, mpz_t Ks,  key_gpq_t *val);
-void Verify(sign_t *signature, mpz_t Kp, key_gpq_t *val);
+bool Verify(char *message,sign_t *signature, mpz_t Kp, key_gpq_t *val);
 
 #endif /* !SHNORR_H_ */

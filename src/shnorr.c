@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 #include "gmp.h"
 #include "function.h"
 #include "sha256.h"
@@ -25,7 +26,7 @@ sign_t	*Sign(char *message, mpz_t Ks, key_gpq_t *val){
   mpz_urandomm(r, state, tmp);// 0 <= r <= q - 4
   mpz_add_ui(r, r, 2);	// 2 <= r <= q - 2
 
-  ExpMod(R, val->g, r, val->p); // r = g^r [p]
+  ExpMod(R, val->g, r, val->p); // R = g^r [p]
 
   /* calcul de c = H(R||M) mod q */
   TCSha256State_t sha;
@@ -38,6 +39,10 @@ sign_t	*Sign(char *message, mpz_t Ks, key_gpq_t *val){
   dest[0] = 0;
   strcat(dest, strR); // dest = R;
   strcat(dest, message); // dest = R || M
+  tc_sha256_update(sha,dest,strlen(strR) + strlen(message)); // H(R||M)
+  mpz_t Res;
+  mpz_init(Res);
+  mpz_mod(signature->c,sha,val->q);// modulo q
   
   /* Calcul de a*/
   mpz_mul(tmp, signature->c, Ks);
@@ -51,7 +56,7 @@ sign_t	*Sign(char *message, mpz_t Ks, key_gpq_t *val){
 /* 
 */
 
-void Verify(sign_t *signature, mpz_t Kp, key_gpq_t *val){
+bool Verify(char* message, sign_t *signature, mpz_t Kp, key_gpq_t *val){
   mpz_t R;
   mpz_t tmp;
   mpz_t	tmp2;
@@ -65,8 +70,27 @@ void Verify(sign_t *signature, mpz_t Kp, key_gpq_t *val){
   mpz_set_ui(tmp, 1);
   ExpMod(R, R, tmp, val->p); //  R = R[p]
 
-  //calculer tmp = H(R || M) [q]
+  //calculer tmp = H(R' || M) [q]
+  TCSha256State_t sha;
+  char *strR = NULL;
+  char *dest;
+
+  tc_sha256_init(sha);
+  strR = mpz_get_str("0123456789", 10, R);
+  dest = malloc(sizeof(*dest) * (strlen(strR) + strlen(message)));
+  dest[0] = 0;
+  strcat(dest, strR); // dest = R;
+  strcat(dest, message); // dest = R || M
+  tc_sha256_update(sha,dest,strlen(strR) + strlen(message));
+  mpz_t Res;
+  mpz_init(Res);
+  mpz_mod(tmp,sha,val->q);// modulo
+  mpz_mod(Res,signature->c,val->q);
+
   //verifier c = w
+  if( mpz_equal(Res,tmp)){
+    return true;
+  }
   
-  return;
+  return false;
 }

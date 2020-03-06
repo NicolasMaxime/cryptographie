@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include "gmp.h"
 #include "function.h"
 #include "test.h"
@@ -16,12 +17,12 @@ key_gpq_t	*generate_key(mpz_t Ks, mpz_t Kp){
   return ret;
 }
 
-void shnorr(char *message, mpz_t Ks, mpz_t Kp, key_gpq_t *val){
+bool shnorr(char *message, mpz_t Ks, mpz_t Kp, key_gpq_t *val){
   sign_t *signature;
   
   signature = Sign(message, Ks, val);
-  Verify(signature, Kp, val);
-  return ;
+  bool bon = Verify(message, signature, Kp, val);
+  return bon;
 }
 
 int	main(){
