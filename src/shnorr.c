@@ -40,9 +40,11 @@ sign_t	*Sign(char *message, mpz_t Ks, key_gpq_t *val){
   strcat(dest, strR); // dest = R;
   strcat(dest, message); // dest = R || M
   tc_sha256_update(sha,dest,strlen(strR) + strlen(message)); // H(R||M)
-  mpz_t Res;
+  mpz_t Res,tmp3;
   mpz_init(Res);
-  mpz_mod(signature->c,sha,val->q);// modulo q
+  mpz_init(tmp3);
+  mpz_set_ui(tmp3,sha->bits_hashed);
+  mpz_mod(signature->c,tmp3,val->q);// modulo q
   
   /* Calcul de a*/
   mpz_mul(tmp, signature->c, Ks);
@@ -82,13 +84,16 @@ bool Verify(char* message, sign_t *signature, mpz_t Kp, key_gpq_t *val){
   strcat(dest, strR); // dest = R;
   strcat(dest, message); // dest = R || M
   tc_sha256_update(sha,dest,strlen(strR) + strlen(message));
-  mpz_t Res;
+  mpz_t Res,tmp3;
   mpz_init(Res);
-  mpz_mod(tmp,sha,val->q);// modulo
+  mpz_init(tmp3);
+  mpz_set_ui(tmp3,sha->bits_hashed);
+  mpz_mod(tmp,tmp3,val->q);// modulo
   mpz_mod(Res,signature->c,val->q);
 
   //verifier c = w
-  if( mpz_equal(Res,tmp)){
+  if( mpz_cmp(Res,tmp)){
+    printf("MARCHEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEe \n");
     return true;
   }
   
